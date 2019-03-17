@@ -1,5 +1,6 @@
 import numpy as np
 import time
+import sys
 from benchmarking import timing
 
 @timing
@@ -37,7 +38,7 @@ def gauss_jordan(matrix):
 
 
 if __name__ == "__main__":
-    size=300
+    size = int(sys.argv[1])
     arr = np.random.rand(size, size+1)
     gauss_jordan(arr.copy())
     timing(np.linalg.solve)(arr[:,:size], arr[:,size])

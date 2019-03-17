@@ -1,37 +1,33 @@
 from benchmarking import timing
+import numpy as np
+import scipy.linalg
+import scipy
+import sys
 
 @timing
 def lu(matrix):
-    columns, ci = matrix.shape[1], 0
-    rows, ri = matrix.shape[0], 0
+    up = matrix.copy()
+    lo = np.identity(up.shape[0])
+    columns, ci = up.shape[1], 0
+    rows, ri = up.shape[0], 0
 
     # scaling
-    while ri < rows and ci < columns-1:
-        row = matrix[ri]
+    while ri < rows and ci < columns:
+        row = up[ri]
         # Lower diagonal
         for adv_row in range(ri+1, rows):
-            frac = matrix[adv_row][ci] / row[ci]
-            matrix[adv_row] = matrix[adv_row] - row*frac
-            matrix[adv_row][ci] = 0
-        # print(matrix)
-
-        # Upper diagonal
-        for adv_row in range(ri):
-            frac = matrix[adv_row][ci] / row[ci]
-            matrix[adv_row] = matrix[adv_row] - row*frac
-            matrix[adv_row][ci] = 0
+            frac = up[adv_row][ci] / row[ci]
+            up[adv_row] = up[adv_row] - row*frac
+            up[adv_row][ci] = 0
+            lo[adv_row][ci] = frac
 
         ri += 1
         ci += 1
-    # # Scaling
-    # for i in range(rows):
-    #     matrix[i][columns-1] /= matrix[i][i]
-    #     matrix[i][i] /= matrix[i][i]
 
-    return matrix
+    return (lo, up)
 
 if __name__ == "__main__":
-    size=300
-    arr = np.random.rand(size, size+1)
-    gauss_jordan(arr.copy())
-    timing(np.linalg.solve)(arr[:,:size], arr[:,size])
+    size= int(sys.argv[1])
+    arr = np.random.rand(size, size)
+    L, U = lu(arr.copy())
+    P, SL, SU = timing(scipy.linalg.lu)(arr)
