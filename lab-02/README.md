@@ -9,7 +9,7 @@ Maciej Mionskowski | nr albumu: 296628
 
 Usprawnienia względem standardowego algorytmu:
 
-- Partial pivoting
+- Complete/Full pivoting
 - Scaling
 
 ### Porównanie
@@ -43,3 +43,73 @@ Size | Our LU Decomp | Scipy LU Decom
 
 Dla bardzo niewielkich macierzy nasz algorytm dekompozycji potrafi być szybszy niż ten zawarty w bibliotece scipy.
 Dla obszerniejszych danych scipy jest znacznie wydajniejszy.
+
+## Circuit Analysis
+
+Do analizy obwodu zastosowałem mesh analysis oparty na prawach Kirchoffa.
+
+### Dokładniejszy opis algorytmu
+
+0. Zaczynam z grafem nieskierowanym, w którym wagi są oporem
+1. W grafie wyszukiwany jest kernel cykli/cykle bazowe (cycle_basis).
+2. Każdej krawędzi przypisuję listę cykli, do których należy, a także kierunek przepływu prądu dla danego cyklu
+3. Tworzę macierz MxM, gdzie M to liczba cykli bazowych w grafie, wypełniam ją sumą oporu w całym cyklu +/- oporami z cykli powiązanych z krawędziami w cyklu macierzystym. 
+Jest to układ równań oparty na II. prawie Kirchoffa
+4. Rozwiązując układ dostaję przepływ prądu w danym oczku (cyklu)
+5. Wyliczam przepływ prądu i spadek napięcia na każdej krawędzi z prawa Ohma i wyliczonej macierzy.
+
+Następnie dla wygody:
+- Zamieniam graf na skierowany i ustalam kierunek krawędzi.
+- Weryfikuję kalkulacje poprzez sprawdzenie z I prawa Kirchoffa prądy wychodzące i wchodzące dla każdego węzła:
+```python
+    for node in gr.nodes():
+        current_in = sum([gr.edges[in_edge]['current'] for in_edge in gr.in_edges(node)])
+        current_out = sum([gr.edges[in_edge]['current'] for in_edge in gr.out_edges(node)])
+
+        if abs(current_in - current_out) > eps:
+            return False
+
+    return True
+```
+
+### Użycie
+
+Wczytanie pliku z krawędziami w formacie `from, to, resistance` (rezystancja krawędzi)
+i ostatnią linią `from, to, voltage` (przyłożenie napięcia)
+```python
+./circuit_analysis.py graphs/cubic.txt
+```
+
+Wygenerowanie losowego grafu:
+```python
+./circuit_analysis.py > new_graph.txt
+```
+
+### Przykłady
+
+#### Prosty graf spójny
+
+![](graphs/simple.png)
+
+#### Dwa grafy spójne połączone mostem
+Napięcie zostało przyłożone między wierzchołkami 0 a 98
+Mostek znajduje się między 49 a 50
+
+![](graphs/bridge-disjoint.png)
+
+#### Graf 3-regularny (kubiczny)
+
+Napięcie zostało przyłożone między wierzchołkiem 0 a 13, gdzie graf przestał być 3-regularny.
+
+![](graphs/cubic.png)
+
+#### Graf siatka 2D
+
+Napięcie przyłożone między (0,0), a (3,0) 10V
+
+![](graphs/mesh-2d.png)
+
+
+#### Complete graph
+
+![](graphs/another-complete.png)

@@ -4,6 +4,7 @@ import scipy.linalg
 import scipy
 import sys
 
+
 @timing
 def lu(matrix):
     up = matrix.copy()
@@ -11,13 +12,12 @@ def lu(matrix):
     columns, ci = up.shape[1], 0
     rows, ri = up.shape[0], 0
 
-    # scaling
     while ri < rows and ci < columns:
         row = up[ri]
         # Lower diagonal
-        for adv_row in range(ri+1, rows):
+        for adv_row in range(ri + 1, rows):
             frac = up[adv_row][ci] / row[ci]
-            up[adv_row] = up[adv_row] - row*frac
+            up[adv_row] = up[adv_row] - row * frac
             up[adv_row][ci] = 0
             lo[adv_row][ci] = frac
 
@@ -26,8 +26,9 @@ def lu(matrix):
 
     return (lo, up)
 
+
 if __name__ == "__main__":
-    size= int(sys.argv[1])
+    size = int(sys.argv[1])
     arr = np.random.rand(size, size)
     L, U = lu(arr.copy())
     P, SL, SU = timing(scipy.linalg.lu)(arr)
