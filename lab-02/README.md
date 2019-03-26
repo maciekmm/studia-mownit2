@@ -44,6 +44,8 @@ Size | Our LU Decomp | Scipy LU Decom
 Dla bardzo niewielkich macierzy nasz algorytm dekompozycji potrafi być szybszy niż ten zawarty w bibliotece scipy.
 Dla obszerniejszych danych scipy jest znacznie wydajniejszy.
 
+\newpage
+
 ## Circuit Analysis
 
 Do analizy obwodu zastosowałem mesh analysis oparty na prawach Kirchoffa.
@@ -59,6 +61,7 @@ Jest to układ równań oparty na II. prawie Kirchoffa
 5. Wyliczam przepływ prądu i spadek napięcia na każdej krawędzi z prawa Ohma i wyliczonej macierzy.
 
 Następnie dla wygody:
+
 - Zamieniam graf na skierowany i ustalam kierunek krawędzi.
 - Weryfikuję kalkulacje poprzez sprawdzenie z I prawa Kirchoffa prądy wychodzące i wchodzące dla każdego węzła:
 ```python
@@ -84,18 +87,21 @@ Wygenerowanie losowego grafu:
 ```python
 ./circuit_analysis.py > new_graph.txt
 ```
-
+\newpage
 ### Przykłady
 
 #### Prosty graf spójny
 
 ![](graphs/simple.png)
 
+\newpage
 #### Dwa grafy spójne połączone mostem
 Napięcie zostało przyłożone między wierzchołkami 0 a 98
 Mostek znajduje się między 49 a 50
 
 ![](graphs/bridge-disjoint.png)
+
+\newpage
 
 #### Graf 3-regularny (kubiczny)
 
@@ -103,12 +109,15 @@ Napięcie zostało przyłożone między wierzchołkiem 0 a 13, gdzie graf przest
 
 ![](graphs/cubic.png)
 
+\newpage
+
 #### Graf siatka 2D
 
 Napięcie przyłożone między (0,0), a (3,0) 10V
 
 ![](graphs/mesh-2d.png)
 
+\newpage
 
 #### Complete graph
 
