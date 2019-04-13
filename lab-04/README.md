@@ -84,7 +84,6 @@ np.
 |+1|-1|0|-1|+1|
 |+1|-1|-1|-1|+1|
 |+1|+1|+1|+1|+1|
-gi
 
 ![](binimage/output/03-output.bmp)
 ![](binimage/output/03-annealing.png)
@@ -94,6 +93,9 @@ gi
 
 ![](binimage/output/04-annealing.png)
 
+![](binimage/output/06-output.bmp)
+
+![](binimage/output/06-annealing.png)
 
 ![](binimage/output/output_abc.bmp)
 

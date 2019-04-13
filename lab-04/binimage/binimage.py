@@ -134,7 +134,7 @@ class BinaryImage():
 
 
 if __name__ == "__main__":
-    bin = BinaryImage(steMetric(), (50, 50), 0.3)
+    bin = BinaryImage(steMetric(), (50, 50), 0.5)
     costs = bin.anneal(1000)
     with open("./costs", "w+") as f:
         f.write('\n'.join(list(map(lambda x: str(x), costs))))
