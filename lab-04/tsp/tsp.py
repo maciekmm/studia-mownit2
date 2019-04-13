@@ -52,7 +52,7 @@ def arbitrary_swap(perm):
 def next_permutation_cost(perm, cost):
     # a, b = random.randrange(0, len(perm)), random.randrange(0, len(perm))
     # a, b = tuple(sorted([a, b]))
-    a, b = consecutive_swap(perm)
+    a, b = arbitrary_swap(perm)
     if a == b:
         return a, b, cost
 

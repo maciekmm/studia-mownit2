@@ -54,6 +54,50 @@ np.
 ### 90 points
 ![](tsp/output/result-islands-90.png)
 
+# Binary Image
+
+## Poczynione optymalizacje
+
+- lokalne przeliczanie zmian energii
+- leniwe generowanie nowych stanów (dopiero po akceptacji)
+
+
+## Wyniki
+
+### 8-sąsiedztwo
+
+![](binimage/output/01-output.bmp)
+
+![](binimage/output/01-annealing.png)
+
+![](binimage/output/02-output.bmp)
+
+![](binimage/output/02-annealing.png)
+
+### 16-sąsiedztwo podnoszące energię - 8-sąsiedztwo obniżające energię
+
+
+||||||
+|---|---|---|---|---|
+|+1|+1|+1|+1|+1|
+|+1|-1|-1|-1|+1|
+|+1|-1|0|-1|+1|
+|+1|-1|-1|-1|+1|
+|+1|+1|+1|+1|+1|
+gi
+
+![](binimage/output/03-output.bmp)
+![](binimage/output/03-annealing.png)
+
+
+![](binimage/output/04-output.bmp)
+
+![](binimage/output/04-annealing.png)
+
+
+![](binimage/output/output_abc.bmp)
+
+
 # Sudoku
 
 ## Opis:

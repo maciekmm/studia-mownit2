@@ -15,9 +15,7 @@ def generate_circuit(nodes):
     for (u, v) in gr.edges():
         gr.edges[u, v]['weight'] = random.randint(5, 20)
         gr.edges[u, v].update(loops=[], voltage=None, current=None)
-        print(u, v, gr.edges[u, v]['weight'])
     apply_voltage(gr, 0, nodes - 2, 10)
-    print(0, nodes - 2, 10)
     return gr
 
 
@@ -157,7 +155,7 @@ if __name__ == "__main__":
             [add_edge(crc, f, t, w) for f, t, w in edges]
             apply_voltage(crc, vf, vt, v)
     else:
-        crc = generate_circuit(15)
+        crc = generate_circuit(100)
 
     _, graph = solve(crc)
     assert verify(graph)
