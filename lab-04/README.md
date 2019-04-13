@@ -1,12 +1,69 @@
+Maciej Mionskowski - 296628
+
+---
+
+# TSP
+
+- Użyto schematu metropolisa
+- W celu przyspieszenia wyżarzania funkcja obliczania kosztu dla nowego stanu działa in-place, nowy stan tworzony się dopiero po jego zaakceptowaniu
+- Funkcja kosztu to suma kwadratów odległości między punktami, dzięki czemu algorytm penalizuje długie ścieżki, a dodatkowo odczuwalny jest zysk wydajnościowy
+- Wartość początkowa temperatury i funkcja temperatury zostały dobrane empirycznie
+    - dla normal i uniform distribution: `T0 = cost(initial_state) / math.log10(n)`
+    - dla *clustered* distribution: `T0 = cost(points) * n`
+    - T<sub>n+1</sub> = T<sub>n</sub>/1.00001
+
+Można zauważyć, że algorytm nie jest idealny, nie udało mi się dojść do takiego stanu, by funkcje były całkowicie poprawnie minimalizowne.
+
+### Consecutive swap vs arbitrary swap
+
+Przy consecutive swap minimalizacja zwykle kończyła się dużo gorszym wynikiem niż przy arbitrary swap.
+Tuning parametrów niewiele zmienił w tej kwestii.
+np.
+![](tsp/output/consecutive-swap-2.png)
+
+## Uniform distribution
+
+### 100 points
+![](tsp/output/result-uniform-100.png)
+
+### 10 points
+![](tsp/output/result-uniform-10.png)
+
+### 30 points
+![](tsp/output/result-uniform-30.png)
+
+## Normal distribution
+
+### 100 points
+![](tsp/output/result-normal-100.png)
+
+### 10 points
+![](tsp/output/result-normal-10.png)
+
+### 30 points
+![](tsp/output/result-normal-30.png)
+
+## Clustered distribution
+
+### 18 points
+![](tsp/output/result-islands-18.png)
+
+### 45 points
+![](tsp/output/result-islands-45.png)
+
+### 90 points
+![](tsp/output/result-islands-90.png)
+
 # Sudoku
 
 ## Opis:
 
 - Schemat metropolisa jako funkcja prawdopodobieństwa akceptacji stanu o wyższej energii/niższym scorze.
 - Score jest obliczany jako liczba unikalnych liczb w każdym wierszu i kolumnie. Score = 162 => sudoku rozwiązane
-- Geometryczne wyżarzanie, gdzie T<sub>n+1</sub> = T<sub>n</sub>/1.0002, a T<sub>0</sub> = 1/2
+- Geometryczne wyżarzanie, gdzie T<sub>n+1</sub> = T<sub>n</sub>/1.00002, a T<sub>0</sub> = 1/2
 
 Powyższe parametry dobrano poprzez fine tuning. Dla pewnych problemów wskazana byłaby wyższa temperatura bądź wolniejsze wyżarzanie.
+Podjęto próby np. zwiększania temperatury początkowej przy restarcie, jednak nie przyniosło to pozytywnych efektów.
 
 ## Algorytm
 
@@ -66,7 +123,7 @@ Algorytm poradził sobie również ze zbiorem 50 sudoku o różnym stopniu trudn
 
 
 ### Annealing schema:
-![](./assets/hardest-0.png)
+![](sudoku/output/hardest-0.png)
 
 
 Restarts: 1
@@ -111,7 +168,7 @@ Iterations: 19805000
 
 
 ### Annealing schema:
-![](./assets/hardest-1.png)
+![](sudoku/output/hardest-1.png)
 
 
 Restarts: 11
@@ -156,7 +213,7 @@ Iterations: 7550000
 
 
 ### Annealing schema:
-![](./assets/hardest-2.png)
+![](sudoku/output/hardest-2.png)
 
 
 Restarts: 1
@@ -201,7 +258,7 @@ Iterations: 13825000
 
 
 ### Annealing schema:
-![](./assets/hardest-3.png)
+![](sudoku/output/hardest-3.png)
 
 
 Restarts: 15
@@ -246,7 +303,7 @@ Iterations: 18560000
 
 
 ### Annealing schema:
-![](./assets/hardest-4.png)
+![](sudoku/output/hardest-4.png)
 
 
 Restarts: 7
@@ -291,7 +348,7 @@ Iterations: 31965000
 
 
 ### Annealing schema:
-![](./assets/hardest-5.png)
+![](sudoku/output/hardest-5.png)
 
 
 Restarts: 5
@@ -336,7 +393,7 @@ Iterations: 8500000
 
 
 ### Annealing schema:
-![](./assets/hardest-6.png)
+![](sudoku/output/hardest-6.png)
 
 
 Restarts: 10
@@ -381,7 +438,7 @@ Iterations: 3305000
 
 
 ### Annealing schema:
-![](./assets/hardest-7.png)
+![](sudoku/output/hardest-7.png)
 
 
 Restarts: 3
@@ -426,7 +483,7 @@ Iterations: 12920000
 
 
 ### Annealing schema:
-![](./assets/hardest-8.png)
+![](sudoku/output/hardest-8.png)
 
 
 Restarts: 33
@@ -471,7 +528,7 @@ Iterations: 10000000
 
 
 ### Annealing schema:
-![](./assets/hardest-9.png)
+![](sudoku/output/hardest-9.png)
 
 
 Restarts: 10
@@ -516,7 +573,7 @@ Iterations: 7900000
 
 
 ### Annealing schema:
-![](./assets/hardest-10.png)
+![](sudoku/output/hardest-10.png)
 
 
 Restarts: 3
