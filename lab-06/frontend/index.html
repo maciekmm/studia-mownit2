@@ -16,7 +16,7 @@
             justify-items: center;
             display: flex;
             text-align: center;
-            padding-top: 2em;
+            padding-top: 0em;
         }
 
         body {
@@ -60,6 +60,7 @@
 
         article {
             text-align: justify;
+            margin-top: 2em;
         }
 
         article p {
@@ -94,37 +95,66 @@
 </head>
 <body>
 <header>
+    <ul style="text-align: left;">
+        <li>10000 artykułów</li>
+        <li>40000 słów</li>
+        <li>normalizacja</li>
+        <li>IDF</li>
+        <li>LSI</li>
+    </ul>
     <h1>10<sup>100</sup></h1>
 
     <form id="query-form">
-        <input class="search" type="text" placeholder="Wprowadź frazę">
+        <input class="search" type="text" id="query" placeholder="Wprowadź frazę">
         <input type="submit" value="Szukaj"><br>
-        <input name="idf" type="checkbox" value="idf" id="idf"><label for="idf">IDF</label>
+        <input name="idf" checked="checked" type="checkbox" value="idf" id="idf"><label for="idf">IDF</label>
         <label for="lsi">LSI</label>
-        <select id="lsi">
+        <select id="lsi" name="lsi">
             <option>50</option>
             <option>200</option>
-            <option>2000</option>
-            <option>Full matrix</option>
+            <option selected="selected">2000</option>
         </select>
     </form>
 </header>
 <main>
-    <article>
-        <header>
-            <h1>Donal trump</h1>
-        <span class="date-time"></span><span class="correlation">0.22</span>
-        </header>
-        <p>
-             The Greek government attempted to build a mosque in 2006, but the project was set aside because of legal appeals.'), ('One Massachusetts Town’s Rejection of a Muslim Cemetery', '        For us to continue writing great stories, we need to display ads.             Please select the extension that is blocking ads.     Please follow the steps below, NEWS BRIEF Massachusetts will investigate whether a town in the state violated a Muslim group’s civil rights when it rejected plans to build a Muslim cemetery, U. S. federal officials said Thursday. U. S. Attorney Carmen Ortiz said the investigation seeks to determine if town officials in Dudley, Massachusetts, infringed on the civil liberties of the Islamic Society of Greater Worcester when they rejected the group’s request in November to establish a Muslim cemetery on 55 acres of farmland owned by the society. “All Americans have the right to worship and to bury their loved ones in accordance with their religious beliefs, free from discrimination,”Ortiz said in a statement. “We are opening this investigation to assess whether there have been violations of federal civil rights laws in connection with the request to establish an Islamic cemetery in Dudley. ” The group filed a lawsuit against the town last month after town officials rejected the plan, citing traffic and environment issues. In a town meeting in February, residents voiced concern over Islamic burial practices, arguing that traditional Muslim burials —  which avoid embalming —  could lead to groundwater contamination. Others cited issues related to vandalism, traffic, and noise, with one resident reportedly likening the Islamic call to prayer —  often played at mosques —  to “crazy music. ” Dudley town officials said the town’s zoning practices are not discriminatory. “The Dudley Board of Selectmen welcomes this investigation as an opportunity to show that the Town’s zoning and land use practices do not violate any religious rights of the Islamic Society, nor do such practices discriminate against any assembly or institution on the basis of religion or religious denomination,” town officials said in a statement.  Proposals for the establishment of mosques have been met with similar resistance. Last month, the Justice Department filed a lawsuit against the Bensalem Township in Pennsylvania after its town officials rejected a bid by a Muslim congregation to construct a mosque, alleging that the town lacked justification. Also in July, the Islamic Center of Fredericksburg in Virginia faced pushback from city officials over plans to construct a new mosque.
-        </p>
-    </article>
 </main>
 <script>
+    const main = document.querySelector('main')
+
+    function setArticles(articles) {
+        main.innerHTML = ''
+        for (article of articles) {
+            const artEl = document.createElement('article')
+            main.appendChild(artEl)
+            artEl.innerHTML = '<header><h1 class="title"></h1><span class="correlation">0.22</span></header><p class="content"></p>'
+            artEl.querySelector('.title').innerText = article.title
+            artEl.querySelector('.content').innerText = article.content
+            artEl.querySelector('.correlation').innerText = Math.floor(article.correlation * 100000) / 1000
+        }
+    }
+
     document.getElementById('query-form').addEventListener('submit', (event) => {
         event.preventDefault()
         event.stopPropagation()
-        console.log("submit")
+        event.stopImmediatePropagation()
+        let formData = new URLSearchParams()
+        formData.append('q', document.getElementById("query").value)
+        formData.append('k', document.getElementById("lsi").value)
+        formData.append('idf', document.getElementById("idf").checked)
+        main.innerHTML = 'loading, please wait...'
+        fetch('/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: formData
+        }).then(
+            data => {
+                data.json().then(content => {
+                    setArticles(content)
+                })
+            }
+        )
     })
 </script>
 </body>

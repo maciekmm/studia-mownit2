@@ -1,5 +1,7 @@
 import csv
 import sys
+import time
+
 import nltk
 import pickle
 import numpy as np
@@ -25,8 +27,8 @@ def load_matrix(name):
         return pickle.load(file)
 
 
-def get_dump_name(name, k, articles_count):
-    return '{}-k_{}-arts_{}.pickle'.format(name, k, articles_count)
+def get_dump_name(name, k, articles_count, idf = False):
+    return '{}-k_{}-arts_{}{}.pickle'.format(name, k, articles_count, 'idf' if idf else '')
 
 
 def stem(content):
@@ -35,7 +37,7 @@ def stem(content):
              word.lower() not in stop_words and len(word) > 1]]
 
 
-def make_articles(articles_count):
+def make_articles(articles_count, idf):
     dictionary = nltk.FreqDist()
     stemmed_articles = []
 
@@ -43,7 +45,7 @@ def make_articles(articles_count):
         reader = csv.reader(raw_csv)
         next(reader)
         for i, row in enumerate(reader):
-            stems = stem(row[9])
+            stems = stem('{} {}'.format(row[2], row[9]))
             dictionary.update(stems)
             stemmed_articles.append(stems)
 
@@ -64,8 +66,9 @@ def make_articles(articles_count):
             articles[words.get(word), no] += 1
 
     # IDF
-    for word_i in range(len(words)):
-        articles[word_i, :] *= np.log(articles_count / np.count_nonzero(articles[word_i, :]))
+    if idf:
+        for word_i in range(len(words)):
+            articles[word_i, :] *= np.log(articles_count / np.count_nonzero(articles[word_i, :]))
 
     # normalize
     for art_i in range(articles_count):
@@ -78,15 +81,15 @@ def make_articles(articles_count):
     return words, scipy.sparse.csc_matrix(articles, dtype=float)
 
 
-def load_articles(articles_count=5000):
-    articles_dump_name = get_dump_name('articles', 0, articles_count)
-    words_dump_name = get_dump_name('words', 0, articles_count)
+def load_articles(articles_count, idf):
+    articles_dump_name = get_dump_name('articles', 0, articles_count, idf)
+    words_dump_name = get_dump_name('words', 0, articles_count, idf)
     try:
         articles = load_matrix(articles_dump_name)
         words = load_matrix(words_dump_name)
         return words, articles
     except FileNotFoundError:
-        words, articles = make_articles(articles_count)
+        words, articles = make_articles(articles_count, idf)
         save_matrix(articles_dump_name, articles)
         save_matrix(words_dump_name, words)
         return words, articles
@@ -94,9 +97,9 @@ def load_articles(articles_count=5000):
 
 def process_query(words, query='islam'):
     stems = stem(query)
-    bag_of_words = np.zeros((len(dictionary), 1))
+    bag_of_words = np.zeros((len(words), 1))
     for word in stems:
-        if dictionary.get(word) is None:
+        if words.get(word) is None:
             continue
         bag_of_words[words.get(word)] += 1
 
@@ -105,55 +108,43 @@ def process_query(words, query='islam'):
     return bag_of_words
 
 
-def get_articles(ids):
+def get_articles(ids, correlations):
     articles = []
     with open(file, 'r') as raw_csv:
         reader = csv.reader(raw_csv)
         next(reader)
         for i, row in enumerate(reader):
             if i in ids:
-                articles.append((row[2], row[9]))
+                articles.append({"title": row[2], "author": row[4], "content": row[9][:1000], "correlation": correlations[i]})
     return articles
 
 
 def correlation(articles, query):
+
     correlations = []
     for art_i in range(articles.shape[1]):
         correlations.append((art_i, np.sum(query.T @ articles[:, art_i])))
     correlations.sort(key=lambda art: art[1], reverse=True)
-    return correlations
+    return list(map(lambda x: x[0], correlations)), list(map(lambda x: x[1], correlations))
 
+def best_n(query, n, svd):
+    stvt, diagut = svd
+    query = diagut @ query
+    ids, correlations = correlation(stvt, query)
+    return get_articles(ids[:n], correlations)
 
-def lsi(article, k):
-    u_name = get_dump_name('svd-u', k, article.shape[1])
-    s_name = get_dump_name('svd-s', k, article.shape[1])
-    vt_name = get_dump_name('svd-vt', k, article.shape[1])
+def lsi(articles, k, idf):
+    stvt_name = get_dump_name('svd-stvt', k, articles.shape[1], idf)
+    diagut_name = get_dump_name('svd-diagut', k, articles.shape[1], idf)
     try:
-        u = load_matrix(u_name)
-        s = load_matrix(s_name)
-        vt = load_matrix(vt_name)
-        return u, s, vt
+        stvt = load_matrix(stvt_name)
+        diagut = load_matrix(diagut_name)
+        return stvt, diagut
     except FileNotFoundError:
         u, s, vt = scipy.sparse.linalg.svds(articles, k)
-        save_matrix(u_name, u)
-        save_matrix(s_name, s)
-        save_matrix(vt_name, vt)
-        return u, s, vt
+        stvt = np.diag(s) @ vt
+        diagut = np.diag(1/s) @ u.T
+        save_matrix(stvt_name, stvt)
+        save_matrix(diagut_name, diagut)
+        return stvt, diagut
 
-
-
-if __name__ == '__main__':
-    articles_count = 5000
-    k = 200
-
-    dictionary, articles = load_articles(articles_count=articles_count)
-    query = process_query(dictionary, "islam")
-
-    print("svd")
-    u, s, vt = lsi(articles, k)
-    matrix = np.diag(s) @ vt
-    query = np.diag(1 / s) @ u.T @ query
-    print(get_articles([art[0] for art in correlation(matrix, query)[:10]]))
-
-    print(s.shape)
-    print("finish")
