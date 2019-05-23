@@ -1,0 +1,130 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+            align-items: center;
+            justify-items: center;
+            display: flex;
+            text-align: center;
+            padding-top: 2em;
+        }
+
+        body {
+            width: 80%;
+            font-family: serif;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-weight: 300;
+        }
+
+        input, select {
+            border-radius: 5px;
+            border: 0;
+            height: 30px;
+            text-align: center;
+            margin: 5px auto;
+            background: rgb(244, 244, 244);
+            vertical-align: middle;
+        }
+
+        label {
+            margin-left: 0.2em;
+            font-size: 0.8em;
+        }
+
+        input.search {
+            width: 80%;
+        }
+
+        main, body > header {
+            width: 80%;
+            margin-top: 2em;
+        }
+
+        main {
+            text-align: left;
+            padding: 0 5%;
+        }
+
+        article {
+            text-align: justify;
+        }
+
+        article p {
+            color: #333;
+        }
+
+        article header :not(h1) {
+            color: #bbb;
+        }
+
+        article header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1em;
+        }
+
+        article p {
+            max-height: 200px;
+            text-overflow: ellipsis;
+        }
+
+
+        body > header h1 {
+            font-size: 5em;
+        }
+
+        input[type="submit"] {
+            width: 100px;
+        }
+
+    </style>
+</head>
+<body>
+<header>
+    <h1>10<sup>100</sup></h1>
+
+    <form id="query-form">
+        <input class="search" type="text" placeholder="Wprowadź frazę">
+        <input type="submit" value="Szukaj"><br>
+        <input name="idf" type="checkbox" value="idf" id="idf"><label for="idf">IDF</label>
+        <label for="lsi">LSI</label>
+        <select id="lsi">
+            <option>50</option>
+            <option>200</option>
+            <option>2000</option>
+            <option>Full matrix</option>
+        </select>
+    </form>
+</header>
+<main>
+    <article>
+        <header>
+            <h1>Donal trump</h1>
+        <span class="date-time"></span><span class="correlation">0.22</span>
+        </header>
+        <p>
+             The Greek government attempted to build a mosque in 2006, but the project was set aside because of legal appeals.'), ('One Massachusetts Town’s Rejection of a Muslim Cemetery', '        For us to continue writing great stories, we need to display ads.             Please select the extension that is blocking ads.     Please follow the steps below, NEWS BRIEF Massachusetts will investigate whether a town in the state violated a Muslim group’s civil rights when it rejected plans to build a Muslim cemetery, U. S. federal officials said Thursday. U. S. Attorney Carmen Ortiz said the investigation seeks to determine if town officials in Dudley, Massachusetts, infringed on the civil liberties of the Islamic Society of Greater Worcester when they rejected the group’s request in November to establish a Muslim cemetery on 55 acres of farmland owned by the society. “All Americans have the right to worship and to bury their loved ones in accordance with their religious beliefs, free from discrimination,”Ortiz said in a statement. “We are opening this investigation to assess whether there have been violations of federal civil rights laws in connection with the request to establish an Islamic cemetery in Dudley. ” The group filed a lawsuit against the town last month after town officials rejected the plan, citing traffic and environment issues. In a town meeting in February, residents voiced concern over Islamic burial practices, arguing that traditional Muslim burials —  which avoid embalming —  could lead to groundwater contamination. Others cited issues related to vandalism, traffic, and noise, with one resident reportedly likening the Islamic call to prayer —  often played at mosques —  to “crazy music. ” Dudley town officials said the town’s zoning practices are not discriminatory. “The Dudley Board of Selectmen welcomes this investigation as an opportunity to show that the Town’s zoning and land use practices do not violate any religious rights of the Islamic Society, nor do such practices discriminate against any assembly or institution on the basis of religion or religious denomination,” town officials said in a statement.  Proposals for the establishment of mosques have been met with similar resistance. Last month, the Justice Department filed a lawsuit against the Bensalem Township in Pennsylvania after its town officials rejected a bid by a Muslim congregation to construct a mosque, alleging that the town lacked justification. Also in July, the Islamic Center of Fredericksburg in Virginia faced pushback from city officials over plans to construct a new mosque.
+        </p>
+    </article>
+</main>
+<script>
+    document.getElementById('query-form').addEventListener('submit', (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        console.log("submit")
+    })
+</script>
+</body>
